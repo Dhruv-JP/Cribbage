@@ -14,13 +14,8 @@ public class Cribbage{
 	}
 	public int play(){
 		deal();
-		//playerOne.showHand(cribbageDeck);
-		//playerTwo.showHand(cribbageDeck);
 		askForCribCards();
 		cut();
-		playerOne.showHand(cribbageDeck);
-		playerTwo.showHand(cribbageDeck);
-		crib.showHand(cribbageDeck);
 		boardScore = 0;
 		//while(playCards());
 		scoreHands();
@@ -40,11 +35,9 @@ public class Cribbage{
 		sort(firstHand);
 		sort(secondHand);
 		if(playerOne.amIDealing()){
-			System.out.println("player one dealing");
 			playerOne.setCards(firstHand);
 			playerTwo.setCards(secondHand);
 		}else{
-			System.out.println("player two dealing");
 			playerOne.setCards(firstHand);
 			playerTwo.setCards(secondHand);
 		}
@@ -59,7 +52,6 @@ public class Cribbage{
 	}
 	public void cut(){
 		cutCard = cribbageDeck.getCut();
-		System.out.println("\n\nCut: "+cribbageDeck.getSuit(cutCard)+" "+cribbageDeck.getValue(cutCard));
 	}
 	public void playCards(){
 		boolean playerOneHasCards = true;
@@ -97,15 +89,17 @@ public class Cribbage{
 		int argh;
 		if(playerOne.amIDealing()){
 			playerTwo.setScore(fifteens(addCutCardPTwo));
+			if(playerTwo.getScore >= 121)
+				break;
 			playerOne.setScore(fifteens(addCutCardPOne));
 			playerOne.setScore(fifteens(addCutCardCrib));
 		}else{
 			playerOne.setScore(fifteens(addCutCardPOne));
+			if(playerOne.getScore >= 121)
+				break;
 			playerTwo.setScore(fifteens(addCutCardPTwo));
 			playerTwo.setScore(fifteens(addCutCardCrib));
 		}
-		System.out.println("player one score: "+playerOne.getScore());
-		System.out.println("player two score: "+playerTwo.getScore());
 	}
 	public int fifteens(int[] hand){
 		//count the fifteens then return the next check
