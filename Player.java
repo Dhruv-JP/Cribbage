@@ -43,7 +43,7 @@ public class Player{
 	}
 	public void sortCards(){
 		for(int j = 0; j < hand.length; j++){
-			for(int i = 0; i < hand.length; i++){
+			for(int i = 0; i < hand.length-1; i++){
 				if(hand[i] == -1){
 					int temp = hand[i];
 					hand[i] = hand[i+1];
