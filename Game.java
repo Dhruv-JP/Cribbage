@@ -9,16 +9,15 @@ public class Game{
 			int inProgress = 0;
 			while(inProgress == 0){
 				inProgress = game.play();
-		/*	try{
-				Thread.currentThread().sleep(3000);
-			}catch(InterruptedException e){
-			}*/
 			}
+			try{
+				Thread.currentThread().sleep(1500);
+			}catch(Exception e){}
 			if(inProgress == 1)
 				p1Win++;
 			else
 				p2Win++;
-			if(p2Win == 100 && p1Win < 100){
+			if(p2Win == 10 || p1Win == 10){
 				System.out.println("Player 1: "+p1Win);
 				System.out.println("Player 2: "+p2Win);
 				p1Win = p2Win = 0;

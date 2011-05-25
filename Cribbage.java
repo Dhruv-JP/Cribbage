@@ -54,12 +54,43 @@ public class Cribbage{
 		cutCard = cribbageDeck.getCut();
 	}
 	public void playCards(){
+		// true is pOne false is pTwo
+		boolean playersTurn = playerOne.amIDealing();
+		// get player hand lengths
+		boardScore = 0;
+		if(playersTurn){
+			//add the first points to the board
+			boardScore = cribbageDeck.getValue(playerOne.playCard());
+		else
+			boardScore = cribbageDeck.getValue(playerTwo.playCard());
+		playersTurn = !playersTurn;
+		while(playerOne.getHand()[0] != -1 && playerTwo.getHand()[0] != -1){
+			boolean pOneHasMove = checkPlayable(playerOne.getHand());
+			boolean pTwoHasMove = checkPlayable(playerTwo.getHand());
+			if(pOneHasMove && pTwoHasMove){
+				if(playersTurn)
+					//need to find which card to play (1)
+				else
+					//find the card to play for this player (2)
+				playersTurn = !playersTurn;
+			}else if(pOneHasMove){
+				//play the move
+			}else if(pTwoHasMove){
+				//play the move
+			}else
+				boardScore = 0;
+		}
+	//return since its all 0
 		boolean playerOneHasCards = true;
 		boolean playerTwoHasCards = true;
 		boolean firstMove = true;
 		int playedLast = 0;
 		int cardPlayed;
 		boardScore = 0;
+		int[] p1Hand = playerOne.getHand();
+		int[] p2Hand = playerTwo.getHand();
+		playerOneHasCards = checkPlayable(p1Hand);
+		playerTwoHasCards = checkPlayable(p2Hand);
 		if(firstMove && playerOne.amIDealing()){
 			System.out.println("Player two");
 			cardPlayed = playerTwo.playCard();
@@ -71,6 +102,14 @@ public class Cribbage{
 			playedLast = 1;
 		}
 		boardScore += cribbageDeck.getValue(cardPlayed);
+	}
+	public boolean checkPlayable(int[] Hand){
+		//get the board score
+		for(int i = 0; i < Hand.length-1; i++){
+			if(boardScore + cribbageDeck.getValue(Hand[i]) <= 31)
+				return true;
+		}
+		return false;
 	}
 	public void printASDF(int[] a){
 		for(int i = 0; i < a.length; i++){
@@ -89,14 +128,14 @@ public class Cribbage{
 		int argh;
 		if(playerOne.amIDealing()){
 			playerTwo.setScore(fifteens(addCutCardPTwo));
-			if(playerTwo.getScore >= 121)
-				break;
+			if(playerTwo.getScore() >= 121)
+				return;
 			playerOne.setScore(fifteens(addCutCardPOne));
 			playerOne.setScore(fifteens(addCutCardCrib));
 		}else{
 			playerOne.setScore(fifteens(addCutCardPOne));
-			if(playerOne.getScore >= 121)
-				break;
+			if(playerOne.getScore() >= 121)
+				return;
 			playerTwo.setScore(fifteens(addCutCardPTwo));
 			playerTwo.setScore(fifteens(addCutCardCrib));
 		}
