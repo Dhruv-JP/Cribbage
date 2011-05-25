@@ -63,7 +63,7 @@ public class Cribbage{
 		// true is pOne false is pTwo
 		boolean playersTurn = playerOne.amIDealing();
 		boardScore = 0;
-		int nextBoardSpot;
+		int nextBoardSpot = 0;
 		int cardPlayed = -1;
 		if(playersTurn){
 			//add the first points to the board
