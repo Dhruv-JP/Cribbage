@@ -18,7 +18,7 @@ public class Cribbage{
 		askForCribCards();
 		cut();
 		boardScore = 0;
-		//while(playCards());
+		playCards();
 		scoreHands();
 		playerOne.setDealer();
 		playerTwo.setDealer();
@@ -62,16 +62,21 @@ public class Cribbage{
 		emptyBoard();
 		// true is pOne false is pTwo
 		boolean playersTurn = playerOne.amIDealing();
+		printASDF(playerOne.getHand());
 		boardScore = 0;
 		int nextBoardSpot = 0;
 		int cardPlayed = -1;
 		if(playersTurn){
 			//add the first points to the board
 			boardScore = cribbageDeck.getValue(playerOne.playCard(cardPlayed));
-		}else
+			playerOne.goodPlay(cardPlayed);
+		}else{
 			boardScore = cribbageDeck.getValue(playerTwo.playCard(cardPlayed));
+			playerTwo.goodPlay(cardPlayed);
+		}
 		playersTurn = !playersTurn;
 		boardCards[nextBoardSpot++] = cardPlayed;
+		System.out.println("boardScore = "+boardScore);
 		while(playerOne.getHand()[0] != -1 && playerTwo.getHand()[0] != -1){
 			cardPlayed = -1;
 			boolean pOneHasMove = checkPlayable(playerOne.getHand());
@@ -112,8 +117,12 @@ public class Cribbage{
 				nextBoardSpot = 0;
 				boardScore = 0;
 			}
-			if(cardPlayed != -1)
+			if(cardPlayed != -1){
 				boardCards[nextBoardSpot++] = cardPlayed;
+				System.out.println("boardScore = "+boardScore);
+			}else
+				System.out.println("***Cleared***");
+
 		}
 	}
 	public boolean checkPlayable(int[] Hand){
@@ -127,10 +136,12 @@ public class Cribbage{
 		return false;
 	}
 	public void printASDF(int[] a){
-		for(int i = 0; i < a.length; i++){
-			System.out.println(cribbageDeck.getNumValue(a[i]));
-	}}
+		for(int i = 0; i < a.length-2; i++){
+			System.out.println(cribbageDeck.getValue(a[i]));
+		}
+	}
 	public void scoreHands(){
+		printASDF(playerOne.getHand());
 		int[] addCutCardPOne = Arrays.copyOf(playerOne.getHand(), 5);
 		addCutCardPOne[4] = cutCard;
 		int[] addCutCardPTwo = Arrays.copyOf(playerTwo.getHand(), 5);
