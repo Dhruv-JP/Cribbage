@@ -3,6 +3,7 @@ import java.math.*;
 public class Cribbage{
 	private Deck cribbageDeck;
 	private Player playerOne, playerTwo, crib;
+	private int[] boardCards = new int[8];
 	private int boardScore, cutCard;
 	Cribbage(){
 		cribbageDeck = new Deck();
@@ -53,59 +54,73 @@ public class Cribbage{
 	public void cut(){
 		cutCard = cribbageDeck.getCut();
 	}
+	public void emptyBoard(){
+		for(int i = 0; i < boardCards.length; i++)
+			boardCards[i] = 0;
+	}
 	public void playCards(){
+		emptyBoard();
 		// true is pOne false is pTwo
 		boolean playersTurn = playerOne.amIDealing();
-		// get player hand lengths
 		boardScore = 0;
+		int nextBoardSpot;
+		int cardPlayed = -1;
 		if(playersTurn){
 			//add the first points to the board
-			boardScore = cribbageDeck.getValue(playerOne.playCard());
-		else
-			boardScore = cribbageDeck.getValue(playerTwo.playCard());
+			boardScore = cribbageDeck.getValue(playerOne.playCard(cardPlayed));
+		}else
+			boardScore = cribbageDeck.getValue(playerTwo.playCard(cardPlayed));
 		playersTurn = !playersTurn;
+		boardCards[nextBoardSpot++] = cardPlayed;
 		while(playerOne.getHand()[0] != -1 && playerTwo.getHand()[0] != -1){
+			cardPlayed = -1;
 			boolean pOneHasMove = checkPlayable(playerOne.getHand());
 			boolean pTwoHasMove = checkPlayable(playerTwo.getHand());
 			if(pOneHasMove && pTwoHasMove){
-				if(playersTurn)
-					//need to find which card to play (1)
-				else
-					//find the card to play for this player (2)
+				if(playersTurn){
+					cardPlayed = playerOne.playCard(cardPlayed);
+					while(cribbageDeck.getValue(cardPlayed) + boardScore > 31)
+						cardPlayed = playerOne.playCard(cardPlayed);
+					playerOne.goodPlay(cardPlayed);
+				}else{
+					cardPlayed = playerTwo.playCard(cardPlayed);
+					while(cribbageDeck.getValue(cardPlayed) + boardScore > 31)
+						cardPlayed = playerTwo.playCard(cardPlayed);
+					playerTwo.goodPlay(cardPlayed);
+				}
+				//check for scores.
+				boardScore += cribbageDeck.getValue(cardPlayed);
 				playersTurn = !playersTurn;
 			}else if(pOneHasMove){
 				//play the move
+				cardPlayed = playerOne.playCard(cardPlayed);
+				while(cribbageDeck.getValue(cardPlayed) + boardScore > 31)
+					cardPlayed = playerOne.playCard(cardPlayed);
+				playerOne.goodPlay(cardPlayed);
+				boardScore += cribbageDeck.getValue(cardPlayed);
+				//check for scores.
 			}else if(pTwoHasMove){
 				//play the move
-			}else
+				cardPlayed = playerTwo.playCard(cardPlayed);
+				while(cribbageDeck.getValue(cardPlayed) + boardScore > 31)
+					cardPlayed = playerTwo.playCard(cardPlayed);
+				playerTwo.goodPlay(cardPlayed);
+				boardScore += cribbageDeck.getValue(cardPlayed);
+				//check for scores.
+			}else{
+				emptyBoard();
+				nextBoardSpot = 0;
 				boardScore = 0;
+			}
+			if(cardPlayed != -1)
+				boardCards[nextBoardSpot++] = cardPlayed;
 		}
-	//return since its all 0
-		boolean playerOneHasCards = true;
-		boolean playerTwoHasCards = true;
-		boolean firstMove = true;
-		int playedLast = 0;
-		int cardPlayed;
-		boardScore = 0;
-		int[] p1Hand = playerOne.getHand();
-		int[] p2Hand = playerTwo.getHand();
-		playerOneHasCards = checkPlayable(p1Hand);
-		playerTwoHasCards = checkPlayable(p2Hand);
-		if(firstMove && playerOne.amIDealing()){
-			System.out.println("Player two");
-			cardPlayed = playerTwo.playCard();
-			playerTwo.goodMove();
-			playedLast = 2;
-		}else{
-			cardPlayed = playerOne.playCard();
-			playerOne.goodMove();
-			playedLast = 1;
-		}
-		boardScore += cribbageDeck.getValue(cardPlayed);
 	}
 	public boolean checkPlayable(int[] Hand){
 		//get the board score
-		for(int i = 0; i < Hand.length-1; i++){
+		for(int i = 0; i < Hand.length; i++){
+			if(Hand[i] == -1)
+				return false;
 			if(boardScore + cribbageDeck.getValue(Hand[i]) <= 31)
 				return true;
 		}
