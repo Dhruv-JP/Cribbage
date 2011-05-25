@@ -38,23 +38,42 @@ public class Player{
 		int[] cribCards = {hand[0], hand[1]};
 		hand[0] = -1;
 		hand[1] = -1;
+		sortCards();
 		return cribCards;
 	}
-	public int playCard(){
-		//choose card. make temp. set to -1 return temp
-		for(int i = 2; i < 6; i++){
-			if(hand[i] != -1){
-				cardPlayed = i;
-				return hand[i];
+	public void sortCards(){
+		for(int j = 0; j < hand.length; j++){
+			for(int i = 0; i < hand.length; i++){
+				if(hand[i] == -1){
+					int temp = hand[i];
+					hand[i] = hand[i+1];
+					hand[i+1] = temp;
+				}
 			}
+		if(hand[j] != -1)
+			break;
+		}
+	}
+	public int playCard(int lastAttempt){
+		if(lastAttempt == -1)
+			return hand[0];
+		//search hand for card send card after
+		for(int i = 0; i < hand.length; i++){
+			if(hand[i] == lastAttempt)
+				return hand[i++];
 		}
 		return -1;
 	}
-	public void goodMove(){
-		hand[cardPlayed] = -1;
+	public void goodPlay(int cardPlayed){
+		for(int i = 0; i < hand.length; i++){
+			if(hand[i] == cardPlayed)
+				hand[i] = -1;
+		}
+		sortCards();
 	}
 	public int[] getHand(){
 		int[] trueHand = new int[4];
+		trueHand[0] = -1;
 		int count = 0;
 		for(int i = 0; i < hand.length; i++){
 			if(hand[i] != -1)
