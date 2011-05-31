@@ -18,8 +18,10 @@ public class Cribbage{
 		askForCribCards();
 		cut();
 		boardScore = 0;
+		int[] playerOneCards = playerOne.getHand().clone();
+		int[] playerTwoCards = playerTwo.getHand().clone();
 		playCards();
-		scoreHands();
+		scoreHands(playerOneCards, playerTwoCards);
 		playerOne.setDealer();
 		playerTwo.setDealer();
 		if(playerOne.getScore() >= 121)
@@ -62,22 +64,27 @@ public class Cribbage{
 		emptyBoard();
 		// true is pOne false is pTwo
 		boolean playersTurn = playerOne.amIDealing();
+		//code to view if it is working correctly
+		System.out.print("Player 1: ");
 		printASDF(playerOne.getHand());
+		System.out.print("Player 2: ");
+		printASDF(playerTwo.getHand());
 		boardScore = 0;
 		int nextBoardSpot = 0;
 		int cardPlayed = -1;
 		if(playersTurn){
 			//add the first points to the board
-			boardScore = cribbageDeck.getValue(playerOne.playCard(cardPlayed));
+			cardPlayed = playerOne.playCard(cardPlayed);
 			playerOne.goodPlay(cardPlayed);
 		}else{
-			boardScore = cribbageDeck.getValue(playerTwo.playCard(cardPlayed));
+			cardPlayed = playerTwo.playCard(cardPlayed);
 			playerTwo.goodPlay(cardPlayed);
 		}
+		boardScore = cribbageDeck.getValue(cardPlayed);
 		playersTurn = !playersTurn;
 		boardCards[nextBoardSpot++] = cardPlayed;
-		System.out.println("boardScore = "+boardScore);
-		while(playerOne.getHand()[0] != -1 && playerTwo.getHand()[0] != -1){
+		//System.out.println("boardScore = "+boardScore);
+		while(playerOne.getHand()[0] != -1 || playerTwo.getHand()[0] != -1){
 			cardPlayed = -1;
 			boolean pOneHasMove = checkPlayable(playerOne.getHand());
 			boolean pTwoHasMove = checkPlayable(playerTwo.getHand());
@@ -103,7 +110,7 @@ public class Cribbage{
 					cardPlayed = playerOne.playCard(cardPlayed);
 				playerOne.goodPlay(cardPlayed);
 				boardScore += cribbageDeck.getValue(cardPlayed);
-				//check for scores.
+				playersTurn = !playersTurn;
 			}else if(pTwoHasMove){
 				//play the move
 				cardPlayed = playerTwo.playCard(cardPlayed);
@@ -111,7 +118,7 @@ public class Cribbage{
 					cardPlayed = playerTwo.playCard(cardPlayed);
 				playerTwo.goodPlay(cardPlayed);
 				boardScore += cribbageDeck.getValue(cardPlayed);
-				//check for scores.
+				playersTurn = !playersTurn;
 			}else{
 				emptyBoard();
 				nextBoardSpot = 0;
@@ -121,9 +128,60 @@ public class Cribbage{
 				boardCards[nextBoardSpot++] = cardPlayed;
 				System.out.println("boardScore = "+boardScore);
 			}else
-				System.out.println("***Cleared***");
-
+				System.out.println("***Cleared***");			
+			if(!playersTurn){
+				playerOne.setScore(boardPoints(nextBoardSpot));
+			}else{
+				playerTwo.setScore(boardPoints(nextBoardSpot));
+			}
 		}
+	}
+	public int boardPoints(int nextEmptySpot){
+		int points = 0;
+		switch(boardScore){
+			case 0:
+				points += 0;
+				break;
+			case 15:
+				points += 2;
+				break;
+			case 31:
+				points += 2;
+				break;
+			default:
+				break;
+		}
+		//Check for runs and pairs
+		switch(nextEmptySpot){
+			case 0:
+				break;
+			case 1:
+				break;
+			case 2:
+				points += CheckBoardPairs(nextEmptySpot);
+				break;
+			default:
+				points += CheckBoardRuns(nextEmptySpot);
+				break;
+		}
+		return points;
+	}
+	public int CheckBoardPairs(int next){
+		int amount = 0;
+		for(int i = next-1; i > 0; i--){
+			if(cribbageDeck.getFace(boardCards[i]).compareTo(cribbageDeck.getFace(boardCards[i-1])) == 0)
+				amount++;
+			else
+				break;
+		}
+		if(amount > 0)
+			System.out.println("There were: "+amount*(amount+1)+" pair points");
+		return amount*(amount+1);
+	}
+	public int CheckBoardRuns(int next){
+		//take first three cards. sort them. see if they are a run.
+		//if not return checkboardpoints if they are add one more card until all used up to find the run amount.
+		return 0;
 	}
 	public boolean checkPlayable(int[] Hand){
 		//get the board score
@@ -137,14 +195,15 @@ public class Cribbage{
 	}
 	public void printASDF(int[] a){
 		for(int i = 0; i < a.length-2; i++){
-			System.out.println(cribbageDeck.getValue(a[i]));
+			if(a[i] == -1)
+				break;
+			System.out.println(cribbageDeck.getFace(a[i]));
 		}
 	}
-	public void scoreHands(){
-		printASDF(playerOne.getHand());
-		int[] addCutCardPOne = Arrays.copyOf(playerOne.getHand(), 5);
+	public void scoreHands(int[] playerOneCards, int[] playerTwoCards){
+		int[] addCutCardPOne = Arrays.copyOf(playerOneCards, 5);
 		addCutCardPOne[4] = cutCard;
-		int[] addCutCardPTwo = Arrays.copyOf(playerTwo.getHand(), 5);
+		int[] addCutCardPTwo = Arrays.copyOf(playerTwoCards, 5);
 		addCutCardPTwo[4] = cutCard;
 		int[] addCutCardCrib = Arrays.copyOf(crib.getHand(), 5);
 		addCutCardCrib[4] = cutCard;
@@ -212,7 +271,7 @@ public class Cribbage{
 			runScore = (runScore+1)*multiplier;
 			return runScore + flush(hand);
 		}
-		return 0+ flush(hand);
+		return flush(hand);
 	}
 	public int flush(int[] hand){
 		int flushScore = 0;
