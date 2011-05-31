@@ -21,6 +21,7 @@ public class Game{
 				System.out.println("Player 1: "+p1Win);
 				System.out.println("Player 2: "+p2Win);
 				p1Win = p2Win = 0;
+				break;
 			}
 		}
 	}
