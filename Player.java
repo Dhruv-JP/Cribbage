@@ -1,6 +1,6 @@
 public class Player{
 	private int playerNum, score, cardPlayed;
-	private int[] hand, playHand;
+	private int[] hand;
 	private boolean dealer;
 
 	Player(int playNum, int startScore, int cardsInHand){
@@ -8,7 +8,6 @@ public class Player{
 		playerNum = playNum;
 		score = startScore;
 		hand = new int[cardsInHand];
-		playHand = new int[cardsInHand];
 	}
 	public void setCards(int[] cards){
 		hand = cards;
@@ -39,43 +38,38 @@ public class Player{
 		int[] cribCards = {hand[0], hand[1]};
 		hand[0] = -1;
 		hand[1] = -1;
-		sortCards(hand);
-		copyCards();
+		sortCards();
 		return cribCards;
 	}
-	public void copyCards(){
-		for(int i = 0; i < hand.length; i++)
-			playHand[i] = hand[i];
-	}
-	public void sortCards(int[] shand){
-		for(int j = 0; j < shand.length; j++){
-			for(int i = 0; i < shand.length-1; i++){
-				if(shand[i] == -1){
-					int temp = shand[i];
-					shand[i] = shand[i+1];
-					shand[i+1] = temp;
+	private void sortCards(){
+		for(int j = 0; j < hand.length; j++){
+			for(int i = 0; i < hand.length-1; i++){
+				if(hand[i] == -1){
+					int temp = hand[i];
+					hand[i] = hand[i+1];
+					hand[i+1] = temp;
 				}
 			}
-		if(shand[j] != -1)
+		if(hand[j] != -1)
 			break;
 		}
 	}
 	public int playCard(int lastAttempt){
 		if(lastAttempt == -1)
-			return playHand[0];
+			return hand[0];
 		//search hand for card send card after
-		for(int i = 0; i < playHand.length; i++){
-			if(playHand[i] == lastAttempt)
-				return playHand[i++];
+		for(int i = 0; i < hand.length; i++){
+			if(hand[i] == lastAttempt)
+				return hand[i++];
 		}
 		return -1;
 	}
 	public void goodPlay(int cardPlayed){
-		for(int i = 0; i < playHand.length; i++){
-			if(playHand[i] == cardPlayed)
-				playHand[i] = -1;
+		for(int i = 0; i < hand.length; i++){
+			if(hand[i] == cardPlayed)
+				hand[i] = -1;
 		}
-		sortCards(playHand);
+		sortCards();
 	}
 	public int[] getHand(){
 		return hand;
