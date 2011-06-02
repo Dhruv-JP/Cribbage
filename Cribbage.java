@@ -187,27 +187,28 @@ public class Cribbage{
 		return amount*(amount+1);
 	}
 	public int CheckBoardRuns(int next){
-		count = 2;
+		int count = 2;
 		boolean aRun = true;
 		while(aRun){
 			int temp = next;
 			int[] runList = new int[count];
 			for (int i = temp-1; i > next-count; i--)
-				runList[count--] = boardCard[i];
+				runList[count--] = boardCards[i];
 			sort(runList);
-			total = 0;
+			int total = 0;
 			for(int i = 0; i < runList.length-1; i++){
-				if(cribbageDeck.getNumValue(runList[i])+1 == cribbageDeck.getNumValue(runList[i+1])
+				if(cribbageDeck.getNumValue(runList[i])+1 == cribbageDeck.getNumValue(runList[i+1]))
 					total++;
 				else
 					break;
 			}
 		if (total < 2)
-			return CheckBoardPairs();
-		count
+			return CheckBoardPairs(next);
+		}
+		//count
 		//take first three cards. sort them. see if they are a run.
 		//if not return checkboardpoints if they are add one more card until all used up to find the run amount.
-		return total;
+		return 0;
 	}
 	public boolean checkPlayable(int[] Hand){
 		//get the board score
