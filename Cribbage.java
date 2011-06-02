@@ -127,8 +127,16 @@ public class Cribbage{
 			if(cardPlayed != -1){
 				boardCards[nextBoardSpot++] = cardPlayed;
 				System.out.println("boardScore = "+boardScore);
-			}else
-				System.out.println("***Cleared***");			
+			}else{
+				if(boardScore != 31){
+					if(!playersTurn){
+						playerOne.setScore(boardPoints(nextBoardSpot));
+					}else{
+						playerTwo.setScore(boardPoints(nextBoardSpot));
+					}
+				}
+				System.out.println("***Cleared***");	
+			}
 			if(!playersTurn){
 				playerOne.setScore(boardPoints(nextBoardSpot));
 			}else{
@@ -179,9 +187,27 @@ public class Cribbage{
 		return amount*(amount+1);
 	}
 	public int CheckBoardRuns(int next){
+		count = 2;
+		boolean aRun = true;
+		while(aRun){
+			int temp = next;
+			int[] runList = new int[count];
+			for (int i = temp-1; i > next-count; i--)
+				runList[count--] = boardCard[i];
+			sort(runList);
+			total = 0;
+			for(int i = 0; i < runList.length-1; i++){
+				if(cribbageDeck.getNumValue(runList[i])+1 == cribbageDeck.getNumValue(runList[i+1])
+					total++;
+				else
+					break;
+			}
+		if (total < 2)
+			return CheckBoardPairs();
+		count
 		//take first three cards. sort them. see if they are a run.
 		//if not return checkboardpoints if they are add one more card until all used up to find the run amount.
-		return 0;
+		return total;
 	}
 	public boolean checkPlayable(int[] Hand){
 		//get the board score
